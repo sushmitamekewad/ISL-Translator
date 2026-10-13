@@ -1,0 +1,4 @@
+model,params_millions,size_fp32_mb,size_int8_mb,latency_ms,latency_std_ms,throughput_fps,test_top1_acc_pct,test_top5_acc_pct,edge_onnx_ready
+mobilenet_v3_small,1.54,5.89,1.47,5.37,0.47,186.4,2.81,21.41,True
+efficientnet_lite0,3.4,12.99,3.25,9.08,0.89,110.2,0.31,12.5,True
+yolo11n,2.81,10.73,2.68,5.82,2.77,171.9,0.0,0.0,True

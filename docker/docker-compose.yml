@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  isl-translator-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: isl_translator_api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-mobilenet_v3_small}
+      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.70}
+      - CONSECUTIVE_FRAMES_THRESHOLD=${CONSECUTIVE_FRAMES_THRESHOLD:-8}
+      - SPACE_TIMEOUT_SECONDS=${SPACE_TIMEOUT_SECONDS:-2.0}
+    volumes:
+      - ../models:/app/models
+      - ../dataset_ISL.zip:/app/dataset_ISL.zip:ro
+    # For GPU acceleration on Linux hosts with NVIDIA Container Toolkit, uncomment below:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]

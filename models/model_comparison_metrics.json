@@ -1,0 +1,38 @@
+[
+    {
+        "model": "mobilenet_v3_small",
+        "params_millions": 1.54,
+        "size_fp32_mb": 5.89,
+        "size_int8_mb": 1.47,
+        "latency_ms": 5.37,
+        "latency_std_ms": 0.47,
+        "throughput_fps": 186.4,
+        "test_top1_acc_pct": 2.81,
+        "test_top5_acc_pct": 21.41,
+        "edge_onnx_ready": true
+    },
+    {
+        "model": "efficientnet_lite0",
+        "params_millions": 3.4,
+        "size_fp32_mb": 12.99,
+        "size_int8_mb": 3.25,
+        "latency_ms": 9.08,
+        "latency_std_ms": 0.89,
+        "throughput_fps": 110.2,
+        "test_top1_acc_pct": 0.31,
+        "test_top5_acc_pct": 12.5,
+        "edge_onnx_ready": true
+    },
+    {
+        "model": "yolo11n",
+        "params_millions": 2.81,
+        "size_fp32_mb": 10.73,
+        "size_int8_mb": 2.68,
+        "latency_ms": 5.82,
+        "latency_std_ms": 2.77,
+        "throughput_fps": 171.9,
+        "test_top1_acc_pct": 0.0,
+        "test_top5_acc_pct": 0.0,
+        "edge_onnx_ready": true
+    }
+]

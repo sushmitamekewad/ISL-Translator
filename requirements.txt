@@ -1,0 +1,32 @@
+# Deep Learning & Computer Vision
+torch>=2.2.0
+torchvision>=0.17.0
+ultralytics>=8.3.0
+timm>=1.0.0
+onnx>=1.16.0
+onnxruntime>=1.18.0
+
+# Image & Data Processing
+opencv-python-headless>=4.9.0
+pillow>=10.2.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+pandas>=2.2.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# API & Server
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+websockets>=12.0
+pydantic>=2.7.0
+python-dotenv>=1.0.1
+
+# Text & NLP Utilities
+pyspellchecker>=0.8.0
+
+# Development & Notebooks
+jupyter>=1.0.0
+ipykernel>=6.29.0
+tqdm>=4.66.0

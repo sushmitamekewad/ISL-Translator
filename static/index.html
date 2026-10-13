@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Sign Language (ISL) Real-Time Translator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-logo">
+                    <span class="sign-icon">🤟</span>
+                </div>
+                <div>
+                    <h1>ISL Translator <span class="badge-live">LIVE AI</span></h1>
+                    <p class="subtitle">Real-time Indian Sign Language Letter-by-Letter to Sentence Translation</p>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <div class="control-group">
+                    <label for="modelSelect">Neural Model:</label>
+                    <select id="modelSelect">
+                        <option value="mobilenet_v3_small">MobileNetV3-Small (Ultra Fast)</option>
+                        <option value="efficientnet_lite0">EfficientNet-Lite0 (High Precision)</option>
+                        <option value="yolo11n">YOLO11n (Nano Backbone)</option>
+                    </select>
+                </div>
+
+                <div class="connection-badge" id="networkBadge">
+                    <span class="status-dot online"></span>
+                    <span id="networkStatusText">Cloud Connected</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="main-grid">
+            <!-- Left Panel: Webcam Stream & Sign Detection -->
+            <section class="card camera-card">
+                <div class="card-header">
+                    <h2>Live Video Stream</h2>
+                    <div class="stream-stats">
+                        <span id="fpsCounter">0 FPS</span> &bull; 
+                        <span id="latencyCounter">0 ms</span>
+                    </div>
+                </div>
+
+                <div class="video-container">
+                    <video id="webcam" autoplay playsinline muted></video>
+                    <canvas id="captureCanvas" style="display:none;"></canvas>
+                    
+                    <div class="hand-guide-box">
+                        <div class="guide-corner tl"></div>
+                        <div class="guide-corner tr"></div>
+                        <div class="guide-corner bl"></div>
+                        <div class="guide-corner br"></div>
+                        <span class="guide-text">Position Hand Gesture Here</span>
+                    </div>
+
+                    <div class="overlay-prediction" id="overlayPrediction">
+                        <div class="detected-letter" id="detectedLetter">--</div>
+                        <div class="confidence-bar-bg">
+                            <div class="confidence-bar-fill" id="confidenceBar"></div>
+                        </div>
+                        <div class="confidence-val" id="confidenceVal">Waiting...</div>
+                    </div>
+                </div>
+
+                <div class="camera-actions">
+                    <button id="toggleCameraBtn" class="btn btn-primary">
+                        <span class="btn-icon">📹</span> Start Webcam
+                    </button>
+                    <div class="stability-container">
+                        <span class="stability-label">Debounce Stability:</span>
+                        <div class="stability-meter">
+                            <div class="stability-fill" id="stabilityFill"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Letter Accumulation, Word Formation, & Sentences -->
+            <section class="card translator-card">
+                <div class="card-header">
+                    <h2>Translation Engine</h2>
+                    <button class="btn btn-sm btn-ghost" id="clearAllBtn">Clear All</button>
+                </div>
+
+                <!-- Live Letter Formation Progress -->
+                <div class="section-block">
+                    <label class="block-label">Currently Typing Word (Letter-by-Letter):</label>
+                    <div class="current-word-display" id="currentWordDisplay">
+                        <span class="word-placeholder">Signs will accumulate here...</span>
+                    </div>
+
+                    <!-- Autocomplete Suggestions -->
+                    <div class="suggestions-wrapper">
+                        <span class="suggestions-label">Suggestions:</span>
+                        <div class="suggestions-chips" id="suggestionsContainer">
+                            <span class="empty-hint">No suggestions yet</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assembled Full Sentence -->
+                <div class="section-block sentence-block">
+                    <label class="block-label">Formed Sentence:</label>
+                    <div class="sentence-box" id="sentenceBox">
+                        <p class="sentence-text" id="sentenceText">No words translated yet.</p>
+                    </div>
+
+                    <div class="sentence-controls">
+                        <button class="btn btn-accent" id="speakBtn">
+                            <span>🔊</span> Speak Sentence
+                        </button>
+                        <button class="btn btn-secondary" id="copyBtn">
+                            <span>📋</span> Copy Text
+                        </button>
+                        <button class="btn btn-outline" id="spaceBtn">
+                            <span>␣</span> Add Space
+                        </button>
+                        <button class="btn btn-outline" id="backspaceBtn">
+                            <span>⌫</span> Backspace
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Top 3 Probabilities -->
+                <div class="section-block">
+                    <label class="block-label">Top Class Probabilities:</label>
+                    <div class="top3-container" id="top3Container">
+                        <div class="prob-row">
+                            <span class="prob-letter">-</span>
+                            <div class="prob-bar-bg"><div class="prob-bar-fill" style="width: 0%"></div></div>
+                            <span class="prob-num">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Offline Architecture & Cloud Fallback Banner -->
+        <footer class="offline-guide-card">
+            <div class="offline-guide-header">
+                <h3>💡 Offline Operation & Edge Deployment Guide</h3>
+                <span class="offline-tag">Cloud & Edge Ready</span>
+            </div>
+            <div class="offline-grid">
+                <div class="offline-col">
+                    <h4>1. Client-Side Browser (PWA + ONNX Web)</h4>
+                    <p>Models are exported to ONNX and run directly inside the browser using WebAssembly / WebGPU. No frames leave the user's laptop or mobile phone. Works 100% without internet!</p>
+                </div>
+                <div class="offline-col">
+                    <h4>2. Local Docker Edge Container</h4>
+                    <p>Spin up the container locally via <code>docker-compose up</code>. The local API processes streams offline on localhost with zero network latency.</p>
+                </div>
+                <div class="offline-col">
+                    <h4>3. Mobile & IoT Hardware</h4>
+                    <p>Convert checkpoints to TFLite or ONNX Runtime Mobile for Raspberry Pi, Android, or iOS edge deployment.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
