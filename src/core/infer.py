@@ -42,7 +42,16 @@ class ISLInferenceEngine:
         self.use_onnx = onnx_path is not None
 
         if device is None:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            if torch.cuda.is_available():
+                try:
+                    # Validate that the installed PyTorch build has kernels for this GPU architecture
+                    _ = torch.zeros(1, device="cuda")
+                    self.device = "cuda"
+                except Exception as e:
+                    print(f"[InferenceEngine] CUDA available but architecture compatibility check failed: {e}. Falling back to CPU.")
+                    self.device = "cpu"
+            else:
+                self.device = "cpu"
         else:
             self.device = device
 

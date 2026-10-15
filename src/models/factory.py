@@ -46,7 +46,11 @@ class YOLO11nClassifierWrapper(nn.Module):
             yolo_engine = YOLO("yolo11n-cls.pt" if pretrained else "yolo11n-cls.yaml")
             self.model = yolo_engine.model
             # Adapt the classification head to target num_classes
-            if hasattr(self.model, 'linear'):
+            if hasattr(self.model, 'model') and hasattr(list(self.model.model.children())[-1], 'linear'):
+                classify_layer = list(self.model.model.children())[-1]
+                in_feat = classify_layer.linear.in_features
+                classify_layer.linear = nn.Linear(in_feat, num_classes)
+            elif hasattr(self.model, 'linear'):
                 in_feat = self.model.linear.in_features
                 self.model.linear = nn.Linear(in_feat, num_classes)
             elif hasattr(self.model, 'head') and hasattr(self.model.head, 'fc'):

@@ -78,7 +78,13 @@ def main():
     args = parser.parse_args()
 
     os.makedirs(args.save_dir, exist_ok=True)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
+    if torch.cuda.is_available():
+        try:
+            _ = torch.zeros(1, device="cuda")
+            device = "cuda"
+        except Exception:
+            device = "cpu"
     print(f"=== Starting ISL Training for {args.model} on {device} ===")
     print(f"Loading data directly from archive: {args.zip_path} (Zero disk extraction)")
     print(f"Mode: {'From Scratch (Random Initialization)' if args.from_scratch else 'Transfer Learning (Pre-trained Backbone)'}")

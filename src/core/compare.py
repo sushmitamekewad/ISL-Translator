@@ -88,7 +88,13 @@ def run_model_comparison(zip_path: str = "dataset_ISL.zip", output_dir: str = "m
     os.makedirs(output_dir, exist_ok=True)
     checkpoint_dir = os.path.join(output_dir, "checkpoints")
     os.makedirs(checkpoint_dir, exist_ok=True)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
+    if torch.cuda.is_available():
+        try:
+            _ = torch.zeros(1, device="cuda")
+            device = "cuda"
+        except Exception:
+            device = "cpu"
     print(f"=== ISL Model Benchmark & Comparison Pipeline ===")
     print(f"Hardware Device: {device.upper()}")
     print(f"Auto-train missing models: {auto_train}")

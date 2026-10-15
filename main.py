@@ -1,5 +1,9 @@
 import sys
 import os
+import warnings
+
+# Suppress PyTorch architecture compatibility warning for newer GPUs (e.g. RTX 50-series sm_120)
+warnings.filterwarnings("ignore", category=UserWarning, module="torch.cuda")
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 if PROJECT_ROOT not in sys.path:

@@ -2,7 +2,11 @@ import sys
 import os
 import json
 import base64
+import warnings
 from typing import Optional
+
+# Suppress PyTorch architecture compatibility warning for newer GPUs (e.g. RTX 50-series sm_120)
+warnings.filterwarnings("ignore", category=UserWarning, module="torch.cuda")
 
 # Ensure project root is in sys.path
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -187,12 +191,14 @@ async def websocket_video_stream(websocket: WebSocket):
 
 
 # Static files mount
-if os.path.exists("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+STATIC_DIR = os.path.join(PROJECT_ROOT, "static")
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def serve_index():
-    index_file = os.path.join("static", "index.html")
+    index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
     return "<h1>ISL Translator API is running. Visit /docs for Swagger UI.</h1>"
+
